@@ -2371,6 +2371,29 @@
     font-size: 10px;
   }
 
+  .status-color-controls {
+    display: grid;
+    gap: 6px;
+    justify-items: end;
+  }
+
+  .status-hex-input {
+    width: 102px;
+    min-height: 28px;
+    padding: 4px 7px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #ffffff;
+    color: var(--ink);
+    font-size: 10px;
+    text-transform: lowercase;
+  }
+
+  .status-hex-input:focus {
+    outline: 2px solid rgba(90, 38, 52, 0.18);
+    border-color: var(--berry);
+  }
+
   @media (max-width: 430px) {
     .promo-badge,
     .promo-badge.flash,
@@ -2384,6 +2407,10 @@
 
     .status-swatch-grid {
       justify-content: start;
+    }
+
+    .status-color-controls {
+      justify-items: start;
     }
 
     .product-name {
@@ -2471,7 +2498,7 @@ const SHOP_LINE_URL = "https://lin.ee/7LiGqY4";
 const SHOP_SUBTITLE = "";
 const SHOP_HERO_NOTE = "เว็ปไซต์เช็คสินค้าพร้อมส่งของร้านเรา\nทำเพื่อลูกค้าให้หาสินค้าง่ายขึ้นนะคะ\nstatus: demo สถานะสินค้ายังไม่ real-time น้า";
 const TOP_PROMO_TEXT = "โปรพิเศษประจำเดือน • เช็กสินค้าพร้อมส่งได้ที่นี่";
-const LAST_UPDATED = "07/07/2026 14:03";
+const LAST_UPDATED = "07/07/2026 14:06";
 const SETTINGS_STORAGE_KEY = "mikomiko-store-settings-v1";
 const IMAGE_MAX_SIZE = 620;
 const IMAGE_QUALITY = 0.58;
@@ -2564,7 +2591,10 @@ function renderStatusTrColorPalette() {
     return `
       <div class="status-color-row" data-status-key="${key}">
         <span><i class="status-selected-color" style="--selected-color: ${escapeHtml(color)}"></i>${escapeHtml(status)} <span class="status-color-value">${escapeHtml(color)}</span></span>
-        <div class="status-swatch-grid">${swatches}</div>
+        <div class="status-color-controls">
+          <div class="status-swatch-grid">${swatches}</div>
+          <input class="status-hex-input" type="text" value="${escapeHtml(color)}" data-status-color-key="${key}" aria-label="ใส่โค้ดสี ${escapeHtml(status)}" maxlength="7" placeholder="#f4c430">
+        </div>
       </div>
     `;
   }).join("");
@@ -2771,6 +2801,18 @@ if (els.statusTrColorPalette) {
     const button = event.target.closest("[data-status-color-key][data-status-color]");
     if (!button) return;
     setStatusTrColor(button.dataset.statusColorKey, button.dataset.statusColor);
+  });
+  els.statusTrColorPalette.addEventListener("change", (event) => {
+    const input = event.target.closest(".status-hex-input[data-status-color-key]");
+    if (!input) return;
+    setStatusTrColor(input.dataset.statusColorKey, input.value);
+  });
+  els.statusTrColorPalette.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") return;
+    const input = event.target.closest(".status-hex-input[data-status-color-key]");
+    if (!input) return;
+    event.preventDefault();
+    setStatusTrColor(input.dataset.statusColorKey, input.value);
   });
 }
 
