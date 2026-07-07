@@ -2311,9 +2311,9 @@
 
   .status-color-row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 38px 82px;
-    align-items: center;
-    gap: 6px;
+    grid-template-columns: minmax(0, 96px) minmax(0, 1fr);
+    align-items: start;
+    gap: 8px;
     padding: 6px 7px;
     border: 1px solid var(--line);
     border-radius: 8px;
@@ -2327,22 +2327,48 @@
     overflow-wrap: anywhere;
   }
 
-  .status-color-row input[type="color"] {
-    width: 38px;
-    height: 30px;
-    min-height: 30px;
-    padding: 2px;
-    border-radius: 5px;
-    cursor: pointer;
+  .status-swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 24px);
+    gap: 5px;
+    justify-content: end;
   }
 
-  .status-color-row .status-hex-input {
-    width: 82px;
-    min-height: 30px;
-    padding: 4px 6px;
-    border-radius: 5px;
+  .status-swatch {
+    width: 24px;
+    height: 24px;
+    min-height: 24px;
+    padding: 0;
+    border: 2px solid rgba(33, 25, 24, 0.12);
+    border-radius: 6px;
+    background: var(--swatch-color);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
+  }
+
+  .status-swatch.active {
+    border-color: var(--ink);
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px var(--ink);
+  }
+
+  .status-swatch:focus-visible {
+    outline: 2px solid var(--berry);
+    outline-offset: 2px;
+  }
+
+  .status-selected-color {
+    display: inline-flex;
+    width: 10px;
+    height: 10px;
+    margin-right: 4px;
+    border-radius: 999px;
+    background: var(--selected-color);
+    border: 1px solid rgba(33, 25, 24, 0.18);
+    vertical-align: -1px;
+  }
+
+  .status-color-value {
+    color: var(--muted);
     font-size: 10px;
-    text-transform: lowercase;
   }
 
   @media (max-width: 430px) {
@@ -2350,6 +2376,14 @@
     .promo-badge.flash,
     .promo-badge.hot {
       font-size: 8px;
+    }
+
+    .status-color-row {
+      grid-template-columns: 1fr;
+    }
+
+    .status-swatch-grid {
+      justify-content: start;
     }
 
     .product-name {
@@ -2437,7 +2471,7 @@ const SHOP_LINE_URL = "https://lin.ee/7LiGqY4";
 const SHOP_SUBTITLE = "";
 const SHOP_HERO_NOTE = "เว็ปไซต์เช็คสินค้าพร้อมส่งของร้านเรา\nทำเพื่อลูกค้าให้หาสินค้าง่ายขึ้นนะคะ\nstatus: demo สถานะสินค้ายังไม่ real-time น้า";
 const TOP_PROMO_TEXT = "โปรพิเศษประจำเดือน • เช็กสินค้าพร้อมส่งได้ที่นี่";
-const LAST_UPDATED = "07/07/2026 13:56";
+const LAST_UPDATED = "07/07/2026 14:03";
 const SETTINGS_STORAGE_KEY = "mikomiko-store-settings-v1";
 const IMAGE_MAX_SIZE = 620;
 const IMAGE_QUALITY = 0.58;
@@ -2449,6 +2483,8 @@ const STATUS_COLOR_CONFIG = {
 };
 const STATUS_TR_COLOR_CONFIG = {
   default: "#555555",
+  "New": "#f4c430",
+  "new": "#f4c430",
   "Flash sale": "#e67e00",
   "Hot !": "#e53935",
   "ส่งฟรี": "#15966f",
@@ -2494,6 +2530,12 @@ function applyStatusColorConfig() {
 }
 
 const AUTO_STATUS_TR_COLORS = ["#e67e00", "#e53935", "#15966f", "#2878b5", "#8b4bc2", "#d9465f", "#087f8c", "#45556c"];
+const STATUS_SWATCH_COLORS = [
+  "#f4c430", "#ffd84d", "#e67e00", "#e53935",
+  "#d9465f", "#ec4899", "#8b4bc2", "#2878b5",
+  "#0ea5e9", "#087f8c", "#15966f", "#4f765c",
+  "#45556c", "#555555", "#111827", "#ffffff"
+];
 
 function statusTrValues() {
   return [...new Set(products
@@ -2515,11 +2557,14 @@ function renderStatusTrColorPalette() {
   els.statusTrColorPalette.innerHTML = statusTrValues().map((status) => {
     const color = STATUS_TR_COLOR_CONFIG[status] || STATUS_TR_COLOR_CONFIG.default;
     const key = encodeURIComponent(status);
+    const swatches = STATUS_SWATCH_COLORS.map((swatchColor) => {
+      const active = swatchColor.toLowerCase() === color.toLowerCase();
+      return `<button class="status-swatch${active ? " active" : ""}" type="button" style="--swatch-color: ${escapeHtml(swatchColor)}" data-status-color-key="${key}" data-status-color="${escapeHtml(swatchColor)}" title="${escapeHtml(swatchColor)}" aria-label="เลือกสี ${escapeHtml(status)} ${escapeHtml(swatchColor)}"></button>`;
+    }).join("");
     return `
       <div class="status-color-row" data-status-key="${key}">
-        <span>${escapeHtml(status)}</span>
-        <input type="color" value="${escapeHtml(color)}" data-status-color-key="${key}" aria-label="เลือกสี ${escapeHtml(status)}">
-        <input class="status-hex-input" type="text" value="${escapeHtml(color)}" data-status-color-key="${key}" aria-label="โค้ดสี ${escapeHtml(status)}" maxlength="7">
+        <span><i class="status-selected-color" style="--selected-color: ${escapeHtml(color)}"></i>${escapeHtml(status)} <span class="status-color-value">${escapeHtml(color)}</span></span>
+        <div class="status-swatch-grid">${swatches}</div>
       </div>
     `;
   }).join("");
@@ -2712,20 +2757,20 @@ if (els.topPromoTextInput) {
   });
 });
 
-if (els.statusTrColorPalette) {
-  els.statusTrColorPalette.addEventListener("input", (event) => {
-    const input = event.target;
-    const encodedKey = input?.dataset?.statusColorKey;
+function setStatusTrColor(encodedKey, color) {
     if (!encodedKey) return;
-    const color = cleanText(input.value).toLowerCase();
+    color = cleanText(color).toLowerCase();
     if (!/^#[0-9a-f]{6}$/i.test(color)) return;
     const status = decodeURIComponent(encodedKey);
     STATUS_TR_COLOR_CONFIG[status] = color;
-    const row = input.closest(".status-color-row");
-    row?.querySelectorAll("input").forEach((field) => {
-      if (field !== input) field.value = color;
-    });
     render();
+}
+
+if (els.statusTrColorPalette) {
+  els.statusTrColorPalette.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-status-color-key][data-status-color]");
+    if (!button) return;
+    setStatusTrColor(button.dataset.statusColorKey, button.dataset.statusColor);
   });
 }
 
