@@ -2500,7 +2500,7 @@ const SHOP_HERO_NOTE = "เว็ปไซต์เช็คสินค้า�
 ทำเพื่อลูกค้าให้หาสินค้าง่ายขึ้นนะคะ
 status: demo สถานะสินค้ายังไม่ real-time น้า";
 const TOP_PROMO_TEXT = "โปรพิเศษประจำเดือน • เช็กสินค้าพร้อมส่งได้ที่นี่";
-const LAST_UPDATED = "07/07/2026 14:11";
+const LAST_UPDATED = "07/07/2026 14:16";
 const SETTINGS_STORAGE_KEY = "mikomiko-store-settings-v1";
 const IMAGE_MAX_SIZE = 620;
 const IMAGE_QUALITY = 0.58;
@@ -2906,7 +2906,12 @@ function normalizeProduct(product) {
   const code = cleanText(product.code || product["รหัสสินค้า"] || product["รหัสขาย"] || product.sku).replace(/\.0$/, "").toUpperCase();
   const qty = toNumber(product.qty ?? product.stock ?? product["จำนวน"] ?? product["คงเหลือ"]);
   const rawStatus2 = product.status2 ?? product["สถานะ2"];
-  const status2 = normalizeStatus(rawStatus2, qty);
+  const rawStatus1 = product.status1 || product["สถานะ1"];
+  let status2 = normalizeStatus(rawStatus2, qty);
+  const status1Key = statusKey(rawStatus1);
+  if (qty > 0 && statusKey(status2) === "soldout" && status1Key !== "soldout") {
+    status2 = normalizeStatus(rawStatus1, qty);
+  }
   return {
     code,
     category: inferCategory(code, product.category || product["หมวด"] || product["ประเภทสินค้า"]),
@@ -2918,7 +2923,7 @@ function normalizeProduct(product) {
     showPrice: toDisplayPriceBoolean(product.showPrice ?? product["แสดงราคา"], product.hasShowPriceColumn),
     color: cleanText(product.color || product["สี"]),
     size: cleanText(product.size || product["ไซส์"]),
-    status1: cleanText(product.status1 || product["สถานะ1"]),
+    status1: cleanText(rawStatus1),
     status2,
     statusTr: normalizeStatusText(product.statusTr || product.status_TR || product["status_TR"] || product["Status_TR"] || product["STATUS_TR"]),
     statusText: normalizeStatusText(product.statusText || product.status || product["status"] || product["Status"] || product["STATUS"]),
