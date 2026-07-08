@@ -2751,7 +2751,7 @@ const SHOP_LINE_URL = "https://lin.ee/7LiGqY4";
 const SHOP_SUBTITLE = "";
 const SHOP_HERO_NOTE = "เว็ปไซต์เช็คสินค้าพร้อมส่งของร้านเรา\nทำเพื่อลูกค้าให้หาสินค้าง่ายขึ้นนะคะ\nstatus: demo สถานะสินค้ายังไม่ real-time น้า";
 const TOP_PROMO_TEXT = "โปร 7.7 (6-8 July) -> 2 ชิ้นส่งฟรี + Gift Voucher มูลค่า 100 บาท (1 รางวัล) ดูรายละเอียดหน้า IG เลยค้าบ";
-const LAST_UPDATED = "08/07/2026 21:59";
+const LAST_UPDATED = "08/07/2026 22:00";
 const SETTINGS_STORAGE_KEY = "mikomiko-store-settings-v1";
 const IMAGE_MAX_SIZE = 620;
 const IMAGE_QUALITY = 0.58;
@@ -3229,7 +3229,7 @@ function normalizeCustomCategory(value) {
   const text = cleanText(value);
   if (!text) return "";
   const compact = text.toLowerCase().replace(/\s/g, "");
-  if (["ta", "tp", "top", "เสื้อ", "ba", "bottom", "กางเกง", "กระโปรง"].includes(compact)) return "";
+  if (["ta", "tp", "top", "เสื้อ", "ba", "bottom", "กางเกง", "กระโปรง", "other", "อื่นๆ", "อื่น"].includes(compact)) return "";
   return text;
 }
 
