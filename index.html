@@ -2681,17 +2681,28 @@
   }
 
   .add-cart-button.added {
-    border-color: #F893B5;
-    background: #F893B5;
+    border-color: #292929;
+    background: #292929;
     color: #ffffff;
   }
 
   .scroll-jump-controls .cart-fab {
     position: relative;
-    border-color: #F893B5;
-    background: #F893B5;
+    border: 2px solid #ffffff;
+    background: #292929;
     color: #ffffff;
-    font-size: 19px;
+    box-shadow: 0 0 0 2px #292929, 0 6px 18px rgba(0, 0, 0, 0.22);
+  }
+
+  .cart-fab svg {
+    width: 25px;
+    height: 25px;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   .cart-badge {
@@ -2948,7 +2959,7 @@
     min-height: 44px;
     border: 0;
     border-radius: 10px;
-    background: #F893B5;
+    background: #292929;
     color: #ffffff;
     font-size: 13px;
     font-weight: 800;
@@ -2983,8 +2994,8 @@
   }
 
   .order-codes {
+    min-width: 0;
     display: block;
-    margin-top: 7px;
     padding: 7px 9px;
     border-radius: 7px;
     background: #ffffff;
@@ -2992,6 +3003,14 @@
     font-size: 12px;
     font-weight: 800;
     overflow-wrap: anywhere;
+  }
+
+  .order-code-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 7px;
+    margin-top: 7px;
   }
 
   .order-prompt-actions {
@@ -3022,15 +3041,17 @@
   }
 
   .copy-order-button {
-    width: 100%;
-    min-height: 40px;
-    margin-top: 9px;
-    border: 1px solid #d86f94;
-    border-radius: 8px;
+    width: auto;
+    min-width: 58px;
+    min-height: 32px;
+    padding: 4px 8px;
+    border: 1px solid #292929;
+    border-radius: 7px;
     background: #ffffff;
-    color: #b73564;
-    font-size: 11px;
+    color: #292929;
+    font-size: 9px;
     font-weight: 800;
+    white-space: nowrap;
     touch-action: manipulation;
   }
 
@@ -3158,7 +3179,7 @@
 </main>
 
 <nav class="scroll-jump-controls" aria-label="เลื่อนหน้าเว็บ">
-  <button class="cart-fab" type="button" id="cartButton" title="เปิดตะกร้า" aria-label="เปิดตะกร้า มีสินค้า 0 ชิ้น" aria-controls="cartSheet">🛒<span class="cart-badge" id="cartBadge" hidden>0</span></button>
+  <button class="cart-fab" type="button" id="cartButton" title="เปิดตะกร้า" aria-label="เปิดตะกร้า มีสินค้า 0 ชิ้น" aria-controls="cartSheet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 1.9-1.4L21 8H6"></path><circle cx="10" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle></svg><span class="cart-badge" id="cartBadge" hidden>0</span></button>
   <button type="button" id="topButton" title="ไปบนสุด" aria-label="ไปบนสุด">↑</button>
   <button type="button" id="bottomButton" title="ไปล่างสุด" aria-label="ไปล่างสุด">↓</button>
 </nav>
@@ -3184,7 +3205,7 @@ const SHOP_LINE_URL = "https://lin.ee/7LiGqY4";
 const SHOP_SUBTITLE = "";
 const SHOP_HERO_NOTE = "เว็ปไซต์เช็คสินค้าพร้อมส่งของร้านเรา\nทำเพื่อลูกค้าให้หาสินค้าง่ายขึ้นนะคะ\nstatus: demo สถานะสินค้ายังไม่ real-time น้า";
 const TOP_PROMO_TEXT = "ค่าส่งเหมา 39.- ไม่บวกเพิ่ม (สั่ง 20+ ตัวก็ 39.- ค่า)";
-const LAST_UPDATED = "04/08/2026 11:56";
+const LAST_UPDATED = "04/08/2026 12:07";
 const SETTINGS_STORAGE_KEY = "mikomiko-store-settings-v2";
 const CART_STORAGE_KEY = "mikomiko-cart-v1";
 const SHIPPING_FEE = 39;
@@ -4294,10 +4315,11 @@ function renderCart() {
     ${showOrderPrompt && entries.length ? `
       <div class="order-prompt">
         <div class="order-prompt-title">⚠️ ขั้นตอนสำคัญในการสั่งซื้อ</div>
-        <div class="order-prompt-text">กรุณาไปพิมพ์รหัสสินค้าต่อไปนี้ <strong>ใต้โพสต์ Instagram</strong> เพื่อ CF สินค้า
+        <div class="order-prompt-text">กรุณาไปพิมพ์รหัสสินค้าต่อไปนี้ <strong>ใต้โพสต์ Instagram</strong> เพื่อ CF สินค้า</div>
+        <div class="order-code-row">
           <span class="order-codes">${escapeHtml(orderCodes)}</span>
+          <button class="copy-order-button" type="button" data-copy-order>คัดลอก</button>
         </div>
-        <button class="copy-order-button" type="button" data-copy-order>คัดลอกรหัสสินค้า</button>
         <div class="order-prompt-actions">
           <button type="button" data-order-dismiss>ยังไม่ไป</button>
           <a href="${escapeHtml(firstProductLink)}" target="_blank" rel="noopener">ไปหน้า IG (CF ใต้โพส)</a>
