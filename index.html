@@ -2673,6 +2673,7 @@
     color: var(--berry);
     font-size: 9px;
     font-weight: 700;
+    touch-action: manipulation;
   }
 
   .add-cart-button:active {
@@ -2680,17 +2681,17 @@
   }
 
   .add-cart-button.added {
-    border-color: var(--berry);
-    background: var(--berry);
+    border-color: #F893B5;
+    background: #F893B5;
     color: #ffffff;
   }
 
   .scroll-jump-controls .cart-fab {
     position: relative;
-    border-color: var(--berry);
-    background: var(--berry);
+    border-color: #F893B5;
+    background: #F893B5;
     color: #ffffff;
-    font-size: 17px;
+    font-size: 19px;
   }
 
   .cart-badge {
@@ -2725,6 +2726,7 @@
     bottom: 0;
     z-index: 220;
     width: min(100%, 760px);
+    max-height: min(88vh, 780px);
     max-height: min(88dvh, 780px);
     display: grid;
     grid-template-rows: auto minmax(0, 1fr) auto;
@@ -2859,18 +2861,37 @@
     text-decoration: underline;
   }
 
-  .cart-unit-pill {
-    min-width: 52px;
-    min-height: 28px;
+  .quantity-control {
     display: grid;
-    place-items: center;
-    padding: 0 8px;
+    grid-template-columns: 32px 32px 32px;
+    align-items: center;
     border: 1px solid #e1d8d6;
-    border-radius: 999px;
+    border-radius: 8px;
     background: #faf7f6;
-    color: var(--muted);
+    overflow: hidden;
+  }
+
+  .quantity-control button {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    background: #fff7f8;
+    color: var(--berry);
+    font-size: 17px;
+    font-weight: 700;
+    touch-action: manipulation;
+  }
+
+  .quantity-control button:disabled {
+    color: #c8bfc1;
+    background: #f2eeee;
+  }
+
+  .quantity-control span {
     font-size: 11px;
     font-weight: 700;
+    text-align: center;
   }
 
   .cart-empty {
@@ -2927,10 +2948,11 @@
     min-height: 44px;
     border: 0;
     border-radius: 10px;
-    background: var(--berry);
+    background: #F893B5;
     color: #ffffff;
     font-size: 13px;
     font-weight: 800;
+    touch-action: manipulation;
   }
 
   .checkout-button:disabled {
@@ -2981,7 +3003,7 @@
 
   .order-prompt-actions button,
   .order-prompt-actions a {
-    min-height: 36px;
+    min-height: 42px;
     display: grid;
     place-items: center;
     border: 1px solid var(--berry);
@@ -2991,11 +3013,39 @@
     font-size: 10px;
     font-weight: 700;
     text-decoration: none;
+    touch-action: manipulation;
   }
 
   .order-prompt-actions a {
     background: var(--berry);
     color: #ffffff;
+  }
+
+  .copy-order-button {
+    width: 100%;
+    min-height: 40px;
+    margin-top: 9px;
+    border: 1px solid #d86f94;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #b73564;
+    font-size: 11px;
+    font-weight: 800;
+    touch-action: manipulation;
+  }
+
+  .scroll-jump-controls button {
+    width: 44px;
+    height: 44px;
+    touch-action: manipulation;
+  }
+
+  @media (max-width: 430px) {
+    .scroll-jump-controls button {
+      width: 42px;
+      height: 42px;
+      font-size: 18px;
+    }
   }
 
   .cart-toast {
@@ -3134,7 +3184,7 @@ const SHOP_LINE_URL = "https://lin.ee/7LiGqY4";
 const SHOP_SUBTITLE = "";
 const SHOP_HERO_NOTE = "เว็ปไซต์เช็คสินค้าพร้อมส่งของร้านเรา\nทำเพื่อลูกค้าให้หาสินค้าง่ายขึ้นนะคะ\nstatus: demo สถานะสินค้ายังไม่ real-time น้า";
 const TOP_PROMO_TEXT = "ค่าส่งเหมา 39.- ไม่บวกเพิ่ม (สั่ง 20+ ตัวก็ 39.- ค่า)";
-const LAST_UPDATED = "04/08/2026 11:38";
+const LAST_UPDATED = "04/08/2026 11:56";
 const SETTINGS_STORAGE_KEY = "mikomiko-store-settings-v2";
 const CART_STORAGE_KEY = "mikomiko-cart-v1";
 const SHIPPING_FEE = 39;
@@ -3365,12 +3415,18 @@ els.cartBackdrop?.addEventListener("click", closeCart);
 
 document.addEventListener("click", (event) => {
   const addButton = event.target.closest("[data-add-cart]");
-  if (addButton) addToCart(addButton.dataset.addCart);
+  if (addButton) toggleCartItem(addButton.dataset.addCart);
 });
 
 els.cartSheet?.addEventListener("click", (event) => {
+  const minusButton = event.target.closest("[data-cart-minus]");
+  const plusButton = event.target.closest("[data-cart-plus]");
   const removeButton = event.target.closest("[data-cart-remove]");
+  if (minusButton) setCartQuantity(minusButton.dataset.cartMinus, toNumber(cart[minusButton.dataset.cartMinus]) - 1);
+  if (plusButton) setCartQuantity(plusButton.dataset.cartPlus, toNumber(cart[plusButton.dataset.cartPlus]) + 1);
   if (removeButton) removeFromCart(removeButton.dataset.cartRemove);
+  const copyButton = event.target.closest("[data-copy-order]");
+  if (copyButton) copyOrderCodes(copyButton);
   if (event.target.closest("[data-checkout]")) {
     showOrderPrompt = true;
     renderCart();
@@ -4025,7 +4081,7 @@ function loadCart() {
     const saved = JSON.parse(window.localStorage.getItem(CART_STORAGE_KEY) || "{}");
     if (!saved || typeof saved !== "object" || Array.isArray(saved)) return {};
     return Object.fromEntries(Object.entries(saved)
-      .map(([code, qty]) => [cleanText(code).toUpperCase(), toNumber(qty) > 0 ? 1 : 0])
+      .map(([code, qty]) => [cleanText(code).toUpperCase(), Math.max(0, Math.min(99, Math.floor(toNumber(qty))))])
       .filter(([code, qty]) => code && qty));
   } catch (error) {
     return {};
@@ -4059,18 +4115,26 @@ function cartPricing(product) {
 }
 
 function cartEntries() {
-  return Object.keys(cart).map((code) => ({
+  return Object.entries(cart).map(([code, qty]) => ({
     product: cartProduct(code),
-    qty: 1
+    qty: Math.max(1, Math.floor(toNumber(qty)))
   })).filter((entry) => entry.product);
 }
 
 function cartCount() {
-  return cartEntries().length;
+  return cartEntries().reduce((total, entry) => total + entry.qty, 0);
 }
 
-function removeFromCart(code) {
-  delete cart[code];
+function maxCartQuantity(product) {
+  return product.qty > 0 && statusKey(product.status2) === "ready" ? Math.min(99, product.qty) : 99;
+}
+
+function setCartQuantity(code, quantity) {
+  const product = cartProduct(code);
+  if (!product) return;
+  const nextQuantity = Math.max(0, Math.min(maxCartQuantity(product), Math.floor(toNumber(quantity))));
+  if (nextQuantity) cart[code] = nextQuantity;
+  else delete cart[code];
   showOrderPrompt = false;
   saveCart();
   updateCartBadge();
@@ -4078,11 +4142,16 @@ function removeFromCart(code) {
   renderCart();
 }
 
-function addToCart(code) {
+function removeFromCart(code) {
+  setCartQuantity(code, 0);
+}
+
+function toggleCartItem(code) {
   const product = cartProduct(code);
   if (!product || statusKey(product.status2) === "soldout") return;
   if (cart[code]) {
-    showCartToast(`${product.code} อยู่ในตะกร้าแล้ว (เลือกได้ 1 ชิ้น)`);
+    removeFromCart(code);
+    showCartToast(`นำ ${product.code} ออกจากตะกร้าแล้ว`);
     return;
   }
   cart[code] = 1;
@@ -4105,7 +4174,7 @@ function updateAddCartButtons() {
   document.querySelectorAll("[data-add-cart]").forEach((button) => {
     const quantity = toNumber(cart[button.dataset.addCart]);
     button.classList.toggle("added", quantity > 0);
-    button.textContent = quantity > 0 ? "✓ อยู่ในตะกร้า" : "+ ใส่ตะกร้า";
+    button.textContent = quantity > 0 ? `✓ อยู่ในตะกร้า ${quantity} ชิ้น` : "+ ใส่ตะกร้า";
   });
 }
 
@@ -4124,6 +4193,46 @@ function cartImageHtml(product) {
   return image
     ? `<img src="${escapeHtml(image)}" alt="" loading="lazy">`
     : escapeHtml(product.code);
+}
+
+async function copyOrderCodes(button) {
+  const text = cartEntries().map(({ product, qty }) => `${product.code}${qty > 1 ? ` ×${qty}` : ""}`).join(", ");
+  if (!text) return;
+  let copied = false;
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      copied = true;
+    }
+  } catch (error) {
+    copied = false;
+  }
+  if (!copied) {
+    try {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      textarea.setSelectionRange(0, text.length);
+      copied = document.execCommand("copy");
+      textarea.remove();
+    } catch (error) {
+      copied = false;
+    }
+  }
+  if (copied) {
+    const originalText = button.textContent;
+    button.textContent = "คัดลอกแล้ว ✓";
+    showCartToast("คัดลอกรหัสสินค้าแล้ว");
+    window.setTimeout(() => {
+      if (button.isConnected) button.textContent = originalText;
+    }, 1600);
+  } else {
+    showCartToast("คัดลอกไม่สำเร็จ กรุณากดค้างที่รหัสสินค้า");
+  }
 }
 
 function renderCart() {
@@ -4164,7 +4273,11 @@ function renderCart() {
         </div>
         <div class="cart-item-actions">
           <button class="cart-remove" type="button" data-cart-remove="${escapeHtml(product.code)}">ลบ</button>
-          <div class="cart-unit-pill">1 ชิ้น</div>
+          <div class="quantity-control" aria-label="จำนวน ${escapeHtml(product.code)}">
+            <button type="button" data-cart-minus="${escapeHtml(product.code)}" aria-label="ลดจำนวน ${escapeHtml(product.code)}">−</button>
+            <span>${qty}</span>
+            <button type="button" data-cart-plus="${escapeHtml(product.code)}" aria-label="เพิ่มจำนวน ${escapeHtml(product.code)}"${qty >= maxCartQuantity(product) ? " disabled" : ""}>+</button>
+          </div>
         </div>
       </article>`;
   }).join("") : `
@@ -4184,6 +4297,7 @@ function renderCart() {
         <div class="order-prompt-text">กรุณาไปพิมพ์รหัสสินค้าต่อไปนี้ <strong>ใต้โพสต์ Instagram</strong> เพื่อ CF สินค้า
           <span class="order-codes">${escapeHtml(orderCodes)}</span>
         </div>
+        <button class="copy-order-button" type="button" data-copy-order>คัดลอกรหัสสินค้า</button>
         <div class="order-prompt-actions">
           <button type="button" data-order-dismiss>ยังไม่ไป</button>
           <a href="${escapeHtml(firstProductLink)}" target="_blank" rel="noopener">ไปหน้า IG (CF ใต้โพส)</a>
