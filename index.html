@@ -3042,15 +3042,16 @@
   .order-prompt-actions a {
     background: var(--berry);
     color: #ffffff;
+    gap: 2px;
+    padding: 6px 4px;
+    text-align: center;
   }
 
   .order-prompt-note {
-    grid-column: 2;
-    margin-top: -2px;
-    color: #9c4f00;
-    font-size: 9px;
-    line-height: 1.45;
-    text-align: center;
+    color: #ffe39a;
+    font-size: 8px;
+    font-weight: 700;
+    line-height: 1.3;
   }
 
   .copy-order-button {
@@ -3216,7 +3217,7 @@ const SHOP_LINE_URL = "https://lin.ee/7LiGqY4";
 const SHOP_SUBTITLE = "";
 const SHOP_HERO_NOTE = "เว็ปไซต์เช็คสินค้าพร้อมส่งของร้านเรา\nทำเพื่อลูกค้าให้หาสินค้าง่ายขึ้นนะคะ\nstatus: demo สถานะสินค้ายังไม่ real-time น้า";
 const TOP_PROMO_TEXT = "ค่าส่งเหมา 39.- ไม่บวกเพิ่ม (สั่ง 20+ ตัวก็ 39.- ค่า)";
-const LAST_UPDATED = "08/08/2026 14:45";
+const LAST_UPDATED = "08/08/2026 15:07";
 const SETTINGS_STORAGE_KEY = "mikomiko-store-settings-v2";
 const CART_STORAGE_KEY = "mikomiko-cart-v1";
 const SHIPPING_FEE = 39;
@@ -4352,8 +4353,10 @@ function renderCart() {
         </div>
         <div class="order-prompt-actions">
           <button type="button" data-order-dismiss>ยังไม่ไป</button>
-          <a href="${escapeHtml(firstProductLink)}" target="_blank" rel="noopener">ไปหน้า IG (CF ใต้โพส)</a>
-          <div class="order-prompt-note">* CF หลายรหัสในโพสเดียวได้เลย</div>
+          <a href="${escapeHtml(firstProductLink)}" target="_blank" rel="noopener">
+            <span>ไปหน้า IG (CF ใต้โพส)</span>
+            <span class="order-prompt-note">*CF หลายรหัสในโพสเดียวกันได้เลย</span>
+          </a>
         </div>
       </div>` : ""}
     ${totals.saving ? `<div class="summary-row"><span>ราคารวมปกติ</span><span>${escapeHtml(formatPrice(totals.regular))}</span></div>` : ""}
