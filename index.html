@@ -2757,29 +2757,149 @@
     box-shadow: 0 0 0 2px #292929, 0 6px 18px rgba(0, 0, 0, 0.22);
   }
 
-  .scroll-jump-controls .ig-chat-fab {
-    width: 44px;
-    height: 44px;
+  .scroll-jump-controls .feed-cat-fab {
+    width: 56px;
+    height: 64px;
     display: grid;
+    grid-template-rows: 42px 16px;
     place-items: center;
-    padding: 0;
-    border: 2px solid #ffffff;
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 110%, #feda75 0 24%, #fa7e1e 25% 40%, #d62976 55%, #962fbf 76%, #4f5bd5 100%);
-    color: #ffffff;
-    text-decoration: none;
-    box-shadow: 0 0 0 2px #d62976, 0 6px 18px rgba(150, 47, 191, 0.28);
+    gap: 0;
+    padding: 3px 4px 2px;
+    border: 2px solid #382c31;
+    border-radius: 14px;
+    background: #fffdf5;
+    color: #382c31;
+    box-shadow: 3px 3px 0 #382c31, 0 7px 16px rgba(91, 57, 63, 0.22);
     touch-action: manipulation;
+    animation: cat-feed-bounce 1.7s ease-in-out infinite;
   }
 
-  .ig-chat-fab svg {
-    width: 24px;
-    height: 24px;
+  .feed-cat-fab:hover {
+    animation-play-state: paused;
+    transform: translateY(-2px);
+  }
+
+  .feed-cat-fab .pixel-cat-crop {
+    position: relative;
+    width: 48px;
+    height: 40px;
     display: block;
+    overflow: hidden;
   }
 
-  .ig-chat-fab:active {
-    transform: scale(0.96);
+  .feed-cat-fab .pixel-cat-crop img {
+    position: absolute;
+    top: -3px;
+    left: -121px;
+    width: 173px;
+    max-width: none;
+    height: auto;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+  .feed-cat-fab .feed-label {
+    color: #382c31;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 11px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.8px;
+  }
+
+  .feed-cat-fab:active {
+    animation-play-state: paused;
+    transform: translateY(2px) scale(0.97);
+    box-shadow: 1px 1px 0 #382c31;
+  }
+
+  @keyframes cat-feed-bounce {
+    0%, 100% { transform: translateY(0); }
+    45% { transform: translateY(-4px); }
+    60% { transform: translateY(0); }
+    75% { transform: translateY(-2px); }
+  }
+
+  .cat-thanks-dialog {
+    width: min(390px, calc(100% - 32px));
+    padding: 0;
+    border: 0;
+    border-radius: 26px;
+    background: transparent;
+    box-shadow: 0 20px 52px rgba(68, 39, 45, 0.3);
+  }
+
+  .cat-thanks-dialog::backdrop {
+    background: rgba(65, 42, 46, 0.44);
+    backdrop-filter: blur(3px);
+  }
+
+  .cat-thanks-card {
+    position: relative;
+    overflow: hidden;
+    padding: 25px 24px 20px;
+    border: 3px solid #fff9eb;
+    border-radius: 26px;
+    background:
+      radial-gradient(circle at 12% 12%, rgba(255, 255, 255, 0.9) 0 4px, transparent 5px),
+      radial-gradient(circle at 87% 18%, rgba(255, 255, 255, 0.74) 0 3px, transparent 4px),
+      linear-gradient(145deg, #ffd9b6, #ffc3cd 55%, #ecd8ff);
+    color: #55333d;
+    text-align: center;
+  }
+
+  .cat-thanks-close {
+    position: absolute;
+    top: 10px;
+    right: 11px;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.74);
+    color: #81505d;
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  .cat-thanks-icon {
+    margin-bottom: 5px;
+    font-size: 42px;
+    line-height: 1;
+  }
+
+  .cat-thanks-title {
+    margin: 0 0 9px;
+    color: #9f4f63;
+    font-size: 19px;
+    line-height: 1.35;
+    font-weight: 800;
+  }
+
+  .cat-thanks-message {
+    margin: 0;
+    color: #55333d;
+    font-size: 14px;
+    line-height: 1.48;
+    font-weight: 600;
+  }
+
+  .cat-thanks-code {
+    display: inline-block;
+    margin-top: 2px;
+    color: #9f4f63;
+    font-weight: 800;
+  }
+
+  .cat-thanks-dismiss {
+    min-height: 40px;
+    margin-top: 14px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 999px;
+    background: #9f4f63;
+    color: #fffaf5;
+    font-weight: 800;
   }
 
   .cart-symbol,
@@ -3190,9 +3310,15 @@
       font-size: 18px;
     }
 
-    .scroll-jump-controls .ig-chat-fab {
-      width: 42px;
-      height: 42px;
+    .scroll-jump-controls .feed-cat-fab {
+      width: 52px;
+      height: 60px;
+      grid-template-rows: 39px 15px;
+    }
+
+    .feed-cat-fab .pixel-cat-crop {
+      width: 45px;
+      height: 37px;
     }
   }
 
@@ -3557,17 +3683,24 @@
 <img class="cat-walk-fixed cat-walk-fixed--old-right" data-mascot="walking_orange" src="./cat_walk_full_motion_clean_start.png" alt="" aria-hidden="true">
 
 <nav class="scroll-jump-controls" aria-label="เลื่อนหน้าเว็บ">
-  <a class="ig-chat-fab" href="https://www.instagram.com/mikomiko.th/" target="_blank" rel="noopener" title="แชทกับแม่ค้าทาง Instagram" aria-label="แชทกับแม่ค้าทาง Instagram">
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"></rect>
-      <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"></circle>
-      <circle cx="17.4" cy="6.7" r="1.15" fill="currentColor"></circle>
-    </svg>
-  </a>
+  <button class="feed-cat-fab" type="button" id="feedCatButton" title="ให้อาหารน้องแมว" aria-label="ให้อาหารน้องแมว" aria-haspopup="dialog" aria-controls="catThanksDialog">
+    <span class="pixel-cat-crop" aria-hidden="true"><img src="./cat_walk_classic_mikomiko.png" alt=""></span>
+    <span class="feed-label" aria-hidden="true">Feed</span>
+  </button>
   <button class="cart-fab" type="button" id="cartButton" title="เปิดตะกร้า" aria-label="เปิดตะกร้า มีสินค้า 0 ชิ้น" aria-controls="cartSheet"><span class="cart-symbol" aria-hidden="true">🛒</span><span class="cart-badge" id="cartBadge" hidden>0</span></button>
   <button type="button" id="topButton" title="ไปบนสุด" aria-label="ไปบนสุด">↑</button>
   <button type="button" id="bottomButton" title="ไปล่างสุด" aria-label="ไปล่างสุด">↓</button>
 </nav>
+
+<dialog class="cat-thanks-dialog" id="catThanksDialog" aria-labelledby="catThanksTitle">
+  <div class="cat-thanks-card">
+    <button class="cat-thanks-close" type="button" id="catThanksCloseButton" aria-label="ปิดข้อความ">×</button>
+    <div class="cat-thanks-icon" aria-hidden="true">🐱✨</div>
+    <h2 class="cat-thanks-title" id="catThanksTitle">เหมียวเหมียวเหมียว<br>เหมียววววววเหมียวววว</h2>
+    <p class="cat-thanks-message">แปลว่า ขอบคุณลูกค้าที่น่ารักที่ให้อาหารน้อง &gt;.&lt;<br>DM หาแม่ค้า มีรางวัลแจกให้จนกว่าจะหมด<br><span class="cat-thanks-code">รหัส เหมียววววว</span></p>
+    <button class="cat-thanks-dismiss" type="button" id="catThanksDismissButton">ปิด แล้วช้อปต่อเลย ✨</button>
+  </div>
+</dialog>
 
 <div class="cart-backdrop" id="cartBackdrop" hidden></div>
 <section class="cart-sheet" id="cartSheet" role="dialog" aria-modal="true" aria-labelledby="cartTitle" hidden>
@@ -3588,7 +3721,7 @@ const SHOP_LINE_URL = "https://lin.ee/7LiGqY4";
 const SHOP_SUBTITLE = "";
 const SHOP_HERO_NOTE = "เว็ปไซต์เช็คสินค้าพร้อมส่งของร้านเรา\nทำเพื่อลูกค้าให้หาสินค้าง่ายขึ้นนะคะ\nstatus: demo สถานะสินค้ายังไม่ real-time น้า";
 const TOP_PROMO_TEXT = "ลุกค้าเก่า/ใหม่ ทัก DM ทุกครั้งก่อน CF - > โปรค่าส่ง 19 บาท ⭐️ Flash sale ฉ่ำ ๆ !!";
-const LAST_UPDATED = "14/09/2026 11:12";
+const LAST_UPDATED = "14/09/2026 12:11";
 const SETTINGS_STORAGE_KEY = "mikomiko-store-settings-v2";
 const CART_STORAGE_KEY = "mikomiko-cart-v1";
 const SHIPPING_FEE = 39;
@@ -3813,6 +3946,17 @@ applyStatusColorConfig();
 if (els.saveSettingsButton) els.saveSettingsButton.addEventListener("click", saveCurrentSettings);
 document.getElementById("topButton")?.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
 document.getElementById("bottomButton")?.addEventListener("click", () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" }));
+const catThanksDialog = document.getElementById("catThanksDialog");
+document.getElementById("feedCatButton")?.addEventListener("click", () => catThanksDialog?.showModal());
+document.getElementById("catThanksCloseButton")?.addEventListener("click", () => catThanksDialog?.close());
+document.getElementById("catThanksDismissButton")?.addEventListener("click", () => catThanksDialog?.close());
+catThanksDialog?.addEventListener("click", (event) => {
+  const bounds = catThanksDialog.getBoundingClientRect();
+  if (event.target === catThanksDialog && (
+    event.clientX < bounds.left || event.clientX > bounds.right ||
+    event.clientY < bounds.top || event.clientY > bounds.bottom
+  )) catThanksDialog.close();
+});
 els.cartButton?.addEventListener("click", openCart);
 els.cartCloseButton?.addEventListener("click", closeCart);
 els.cartBackdrop?.addEventListener("click", closeCart);
