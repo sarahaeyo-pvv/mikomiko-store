@@ -3603,7 +3603,7 @@
     .search-box input { font-size: 16px; }
   }
 
-  /* Center the GIF with space on both sides for the floating controls. */
+  /* Fill the viewport; the controls stay above the decorative cat. */
   .neko-mascot-stage {
     position: fixed;
     inset: 0;
@@ -3612,15 +3612,11 @@
   }
   .neko-mascot-stage .neko-sleep-animation {
     position: absolute;
-    inset: auto;
-    top: 50%;
-    left: 50%;
-    width: min(calc(100vw - 160px), 430px);
-    height: min(62vh, 520px);
-    height: min(62svh, 520px);
+    inset: 0;
+    width: 100%;
+    height: 100%;
     max-width: none;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
+    transform: none;
     background: transparent;
     object-fit: contain;
     border: 0;
@@ -3722,7 +3718,7 @@
 </main>
 
 <div class="neko-mascot-stage" aria-hidden="true">
-  <video class="cat-walk-fixed neko-sleep-animation" data-mascot="sleeping_white" src="./center-mascot-v2.mp4" poster="./center-mascot-v2-poster.jpg" autoplay loop muted playsinline preload="metadata" aria-hidden="true" tabindex="-1" disablepictureinpicture></video>
+  <img class="cat-walk-fixed neko-sleep-animation" data-mascot="sleeping_white" src="./neko04-sleep-transparent.webp" alt="" aria-hidden="true" decoding="async">
 </div>
 <img class="cat-walk-fixed cat-walk-fixed--old-right" data-mascot="walking_orange" src="./cat_walk_full_motion_clean_start.png" alt="" aria-hidden="true">
 
@@ -5427,13 +5423,8 @@ render();
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const syncAnimation = () => {
     const paused = document.hidden || reducedMotion.matches || cat.classList.contains('is-hidden');
-    cat.muted = true;
-    if (paused) {
-      cat.pause();
-      if (reducedMotion.matches) cat.currentTime = 0;
-    } else {
-      cat.play().catch(() => {});
-    }
+    const src = paused ? './neko04-sleep-transparent-poster.png' : './neko04-sleep-transparent.webp';
+    if (cat.getAttribute('src') !== src) cat.setAttribute('src', src);
   };
   document.addEventListener('visibilitychange', syncAnimation);
   reducedMotion.addEventListener('change', syncAnimation);
